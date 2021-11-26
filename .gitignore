@@ -1,6 +1,6 @@
 # my specific package ignores (not from template)
 # ignores any file in folder jupyter_notebooks
-jupyter_notebooks/
+notebooks/
 # ignores all jupyter notebooks in any folder
 *.ipynb
 
