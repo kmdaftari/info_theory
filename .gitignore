@@ -1,4 +1,10 @@
-# this is from a template on GitHub
+# my specific package ignores (not from template)
+# ignores any file in folder jupyter_notebooks
+jupyter_notebooks/
+# ignores all jupyter notebooks in any folder
+*.ipynb
+
+# remainder is from a template on GitHub
 # Byte-compiled / optimized / DLL files
 
 __pycache__/
