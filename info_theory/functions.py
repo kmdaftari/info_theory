@@ -74,7 +74,7 @@ def compute_MI_scalar(data, K):
     ny = ni_Y #+ 1
     
     
-    # use k-1 since we had to K=2 to find nearest neighbor that wasn't self
+    # use k-1 since we had to K=2 to find nearest neighbor that wasn't self 
     I = digamma(K-1) - np.mean(digamma(nx) + digamma(ny)) + digamma(L)
 
     
