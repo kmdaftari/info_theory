@@ -18,6 +18,7 @@ def compute_MI_scalar(data, K):
     data must be array of x,y positions, K must be 2 or greater
     '''
     
+
     # ---- COMPUTE NEAREST NEIGHBOR -----
     L = len(data)
 
