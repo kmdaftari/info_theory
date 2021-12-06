@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import cKDTree
-from scipy.special import gamma, factorial
+from scipy.special import digamma, factorial
 
 def fun(x):
     '''
@@ -96,85 +96,75 @@ def compute_MI_scalar_2(X,Y):
     K = 2
         # ---- COMPUTE NEAREST NEIGHBOR -----
 
-        L = len(X)
-        ni_X = []
-        ni_Y = []
-        for i in range(0, L): #iterate over reference points (each point is reference point)
+    L = len(X)
+    ni_X = []
+    ni_Y = []
+    for i in range(0, L): #iterate over reference points (each point is reference point)
 
-            # compute subspace dist between ref point and every other point
-            d = []
-            dist = np.zeros((L,2)) 
-            for j in range(0,L):
-                temp_x = np.abs(X[i]- X[j])
+        # compute subspace dist between ref point and every other point
+        d = []
+        dist = np.zeros((L,2)) 
+        for j in range(0,L):
+            temp_x = np.abs(X[i]- X[j])
 
-                temp_y = np.abs(Y[i]- Y[j])
+            temp_y = np.abs(Y[i]- Y[j])
 
-                d.append(max(temp_x,temp_y)) 
+            d.append(max(temp_x,temp_y)) 
 
-                dist[j,:] = [temp_x, temp_y] 
+            dist[j,:] = [temp_x, temp_y] 
 
-            d = [x for x in d if x > 0] 
+        d = [x for x in d if x > 0] 
 
-            # record distance to nearest neighbor
-            ei = np.min(d) 
+        # record distance to nearest neighbor
+        ei = np.min(d) 
 
-            dist_x = dist[:,0] 
-            dist_y = dist[:,1] 
+        dist_x = dist[:,0] 
+        dist_y = dist[:,1] 
 
-            # count neighbors in subspaces
-            num_X = len(dist_x[dist_x < ei]) #-1
-            num_Y = len(dist_y[dist_y < ei]) #-1 
+        # count neighbors in subspaces
+        num_X = len(dist_x[dist_x < ei]) #-1
+        num_Y = len(dist_y[dist_y < ei]) #-1 
 
-            ni_X = np.append(ni_X,num_X)
-            ni_Y = np.append(ni_Y,num_Y)
-
-
-        # ---- COMPUTE MUTUAL INFORMATION -----
-            # only add 1 to zeros and don't subtract 1
-        for i in range(0, len(ni_X)):
-            if(ni_X[i] == 0 ):
-                ni_X[i]=1
-
-        for i in range(0, len(ni_Y)):
-            if(ni_Y[i] == 0 ):
-                ni_Y[i]=1
-
-        nx = ni_X #+ 1 # add 1 because digamma(0) = -inf
-        ny = ni_Y #+ 1
-
-        # use k-1 since we had to K=2 to find nearest neighbor that wasn't self
-        I = digamma(K-1) - np.mean(digamma(nx) + digamma(ny)) + digamma(L)
-        return(I )
+        ni_X = np.append(ni_X,num_X)
+        ni_Y = np.append(ni_Y,num_Y)
 
 
+    # ---- COMPUTE MUTUAL INFORMATION -----
+        # only add 1 to zeros and don't subtract 1
+    for i in range(0, len(ni_X)):
+        if(ni_X[i] == 0 ):
+            ni_X[i]=1
+
+    for i in range(0, len(ni_Y)):
+        if(ni_Y[i] == 0 ):
+            ni_Y[i]=1
+
+    nx = ni_X #+ 1 # add 1 because digamma(0) = -inf
+    ny = ni_Y #+ 1
+
+    # use k-1 since we had to K=2 to find nearest neighbor that wasn't self
+    I = digamma(K-1) - np.mean(digamma(nx) + digamma(ny)) + digamma(L)
+    return(I )
 
 
-#--------ANGLE DISTANCE FUNCTION----------
-
-def angle_distance(cos1, cos2, sin1, sin2):
-    '''
-    computes min distance between two angles
-    '''
-    temp = cos1*cos2 + sin1*sin2
-
-    return(np.arccos(temp))
 
 
 #----------------------------MI ANGLES WITHOUT BINARY TREE--------------------
-def compute_MI_scalar_angles(data, K):
+def compute_MI_scalar_angles(X,Y):
     '''
-    compute MI between two RVs that are angles
+    compute MI between two RVs that are angles, Z = (X, Y), where X and Y are angles
+    data input is transformed to (cos(X), cos(Y), sin(X), sin(Y))
     does not use binary tree, so K fixed at 2
     '''
     
     K = 2
     # ---- COMPUTE NEAREST NEIGHBOR -----
 
-    L = len(data)
-    cos1 = np.array(data['cos1'])
-    cos2 = np.array(data['cos2'])
-    sin1 = np.array(data['sin1'])
-    sin2 = np.array(data['sin2'])
+    L = len(X)
+    cos1 = np.array(np.cos(X))
+    cos2 = np.array(np.cos(Y))
+    sin1 = np.array(np.sin(X))
+    sin2 = np.array(np.sin(Y))
 
 
     ni_X = []
@@ -235,6 +225,7 @@ def compute_MI_scalar_angles(data, K):
 def compute_MI_scalar_mixed(angle_data, linear_data):
     '''
     computes MI between two RVs, one which is an angle and another which is a scalar
+    input type is array
     does not use binary tree
     '''
     
@@ -301,6 +292,7 @@ def compute_MI_scalar_mixed(angle_data, linear_data):
 def compute_MI_vector(dataX, dataY): 
     '''
     computes MI between two 2D RVs, i.e., Z1 = (X1,Y1), Z2 = (X2, Y2)
+    inpute type is array for both X and Y values: [X1, X2], [Y1, Y2]
     does not use binary tree, so K fixed at 2
     '''
 
@@ -361,3 +353,24 @@ def compute_MI_vector(dataX, dataY):
 
     
     return(I )
+
+
+
+
+#--------ANGLE DISTANCE FUNCTION----------
+
+def angle_distance(cos1, cos2, sin1, sin2):
+    '''
+    computes min distance between two angles
+    '''
+
+    return(np.arccos(cos1*cos2 + sin1*sin2))
+
+#----------EUCLIDIAN DISTANCE FUNCTION-------------
+
+def euclidian_dist(x1,y1,x2,y2):
+    '''
+    computes distance between two x,y pairs
+    '''
+
+    return(np.sqrt((x1-x2)**2 + (y1-y2)**2))
