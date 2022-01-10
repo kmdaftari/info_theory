@@ -1,8 +1,8 @@
 # my specific package ignores (not from template)
 # ignores any file in folder jupyter_notebooks
-notebooks/
+# notebooks/
 # ignores all jupyter notebooks in any folder
-*.ipynb
+#*.ipynb
 
 # remainder is from a template on GitHub
 # Byte-compiled / optimized / DLL files

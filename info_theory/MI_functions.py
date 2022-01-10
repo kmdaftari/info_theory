@@ -10,6 +10,9 @@ def fun(x):
 
     return(x**2 + np.log(3))
 
+def foo():
+    return 3
+
 
 #----------------MI SCALAR WITH BINARY TREE-------------------------------------------
 
@@ -29,16 +32,16 @@ def compute_MI_scalar(data, K):
     temp_list = []
     for i in range(0, L): # iterate over all points as reference points
         ref_point = data[i,:]
-        KNN = tree.query(ref_point, k = [K], p=np.inf, workers = 4)
+        KNN = tree.query(ref_point, k = [K], p=np.inf,workers=1)
         d = {'k':K,
             'X ref':ref_point[0],
-              'Y ref':ref_point[1], #include stationary point
-              'X KNN':data[int(KNN[1]),0], #include neighbor
-              'Y KNN':data[int(KNN[1]),1],
+            'Y ref':ref_point[1], #include stationary point
+            'X KNN':data[int(KNN[1]),0], #include neighbor
+            'Y KNN':data[int(KNN[1]),1],
                 'ei2_X': np.abs(ref_point[0]-data[int(KNN[1]),0]),
                 'ei2_Y': np.abs(ref_point[1]-data[int(KNN[1]),1]),
                 'ei2': max( np.abs(ref_point[0]-data[int(KNN[1]),0]), np.abs(ref_point[1]-data[int(KNN[1]),1])),
-                 'KNN_dist':KNN[0] }
+                'KNN_dist':KNN[0] }
         temp_list.append(d)
 
     neighbors = pd.DataFrame(temp_list)  

@@ -26,5 +26,12 @@ setup(
     long_description = readme,
 
     # do not include tests and documentation when importing package
-    packages = find_packages(exclude = ('tests', 'docs', 'Jupyter_notebooks'))
+    packages = find_packages(exclude = ('tests', 'docs', 'notebooks')),
+    
+    # other python packages used that needed to be installed
+    install_requires = [
+        'numpy',
+        'pandas',
+        'scipy'
+    ]
 )
